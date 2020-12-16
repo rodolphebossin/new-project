@@ -55,7 +55,7 @@ public class BookMethods implements Serializable{
 	
 	public List<Book> returnAvailableBookList() {
 		
-		List<Book> books = returnBookList();
+		List<Book> books = new ArrayList<>();
 		for( Book b : returnBookList()) {
 			if(b.getIsBorrowed() == false) {
 				books.add(b);

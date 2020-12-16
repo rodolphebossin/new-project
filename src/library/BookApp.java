@@ -170,23 +170,18 @@ public class BookApp {
 		System.out.println("Entrez le titre du livre que vous souhaitez emprunter");
 		String title = scan.nextLine();
 		
-		Book bToloan = new Book();
+		Book bookToLoan = new Book();
 		List<Book> books = bookMethods.returnAvailableBookList();
 		for (Book b : books) {
-			if (b.getTitle() == title) {
-				Book bToLoan = b;
-				System.out.println(bToLoan);
+			if (b.getTitle().equals(title)) {
+				bookToLoan = b;
 			}
 		}
-		Book bookToLoan = bToloan;
-		System.out.println(!books.contains(bookToLoan));
-		System.out.println(bookToLoan);
-		
 		if (!books.contains(bookToLoan)) {
 			System.out.println("Ce livre n'est pas disponible ");
 		} else {
 			bookToLoan.setIsBorrowed(true);
-			Loan updatedLoan = new Loan(name, LocalDate.now());
+			Loan updatedLoan = new Loan(name, LocalDate.now(), null);
 			bookToLoan.setLoan(updatedLoan);
 			System.out.println("");
 			System.out.println("---------------------------------");
@@ -202,17 +197,28 @@ public class BookApp {
 		System.out.println("Entrez le titre du livre que vous souhaitez retourner");
 		String title = scan.nextLine();
 
-		List<Book> books = bookMethods.returnAvailableBookList();
-		Book bookToReturn = new Book(title);
-
+		List<Book> books = bookMethods.returnBookList();
+		Book bookToReturn = new Book();
+		
+		for (Book b : books) {
+			System.out.println(b);
+			if (b.getTitle().equals(title)) {
+				bookToReturn = b;
+			}
+		}
+		if (!books.contains(bookToReturn)) {
+			System.out.println("Ce livre ne vient pas de notre bibliothèque ! ");
+		} else {
 		bookToReturn.setIsBorrowed(false);
-		Loan updatedLoan = new Loan(LocalDate.now());
+		Loan updatedLoan = bookToReturn.getLoan();
+		updatedLoan.setReturnDate(LocalDate.now());
 		bookToReturn.setLoan(updatedLoan);
 		
 		System.out.println("");
 		System.out.println("---------------------------------");
 		System.out.println("Livre retourné ");
 		bookMethods.updateList(books);
+		}
 
 	}
 	
