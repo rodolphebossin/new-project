@@ -15,6 +15,7 @@ public class BookMethods implements Serializable{
 	
 	private Book book;
 	private String currentPath;
+	private ArrayList<Loan> loanHistory;
 	
 	public BookMethods() {
 		currentPath = "/Users/rodolphebossin/Documents/Humanbooster/Cours/tests Java/Library/Books/books.rtf";
@@ -91,6 +92,18 @@ public class BookMethods implements Serializable{
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void printList(List<Book> books) {
+
+		if (!books.isEmpty()) {
+			for (Book book : books) {
+				System.out.println(/* counter + " - " + */ book.toString());
+				//counter++;
+			}
+		} else {
+			System.out.println("Aucun livre dans cette liste ");
 		}
 	}
 	/* public Boolean checkIfBookIsInTheList(Book book, List<Book> books) {

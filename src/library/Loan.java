@@ -30,7 +30,7 @@ public class Loan implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Loan [name=" + name + ", loanDate=" + loanDate + ", returnDate=" + returnDate + "]";
+		return "Loan [borrower= " + name + ", loanDate= " + loanDate + ", returnDate= " + returnDate + "]";
 	}
 
 	public String getName() {

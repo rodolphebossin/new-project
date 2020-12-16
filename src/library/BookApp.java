@@ -4,8 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+
+import membersApp.Member;
 
 public class BookApp {
 	
@@ -53,9 +56,9 @@ public class BookApp {
         }
         
         if (action.equalsIgnoreCase(UserActionsBook.CHECK_BORROWED_BOOKS.getValue())) {
-        	checkBorrowedBooks();
+        	checkBook();
         }
-
+        
     }
 	
 	private String printMenu() {
@@ -70,6 +73,7 @@ public class BookApp {
         	System.out.println(UserActionsBook.LIST_BOOKS.getValue() + " - List the books from the list ");
         	System.out.println(UserActionsBook.BORROW_BOOK.getValue() + " - Borrow a book ");
         	System.out.println(UserActionsBook.RETURN_BOOK.getValue() + " - Return a book ");
+        	System.out.println(UserActionsBook.CHECK_BORROWED_BOOKS.getValue() + " - Check books borrowed for a period of time ");
         	System.out.println(UserActionsBook.EXIT.getValue() + " - Exit");
 
             // ask user answer
@@ -181,8 +185,8 @@ public class BookApp {
 			System.out.println("Ce livre n'est pas disponible ");
 		} else {
 			bookToLoan.setIsBorrowed(true);
-			Loan updatedLoan = new Loan(name, LocalDate.now(), null);
-			bookToLoan.setLoan(updatedLoan);
+			Loan updatedLoan = new Loan(name, LocalDate.now().minusDays(1L + (long) (Math.random() * (5L - 1L))), null);
+			bookToLoan.addLoan(updatedLoan);
 			System.out.println("");
 			System.out.println("---------------------------------");
 			System.out.println("Livre empruté ");
@@ -201,7 +205,6 @@ public class BookApp {
 		Book bookToReturn = new Book();
 		
 		for (Book b : books) {
-			System.out.println(b);
 			if (b.getTitle().equals(title)) {
 				bookToReturn = b;
 			}
@@ -210,10 +213,15 @@ public class BookApp {
 			System.out.println("Ce livre ne vient pas de notre bibliothèque ! ");
 		} else {
 		bookToReturn.setIsBorrowed(false);
-		Loan updatedLoan = bookToReturn.getLoan();
-		updatedLoan.setReturnDate(LocalDate.now());
-		bookToReturn.setLoan(updatedLoan);
-		
+		List<Loan> bookToReturnHistory = new ArrayList<>();
+		bookToReturnHistory = bookToReturn.getLoanHistory();
+		Loan updatedLoan = new Loan();
+		for (Loan l : bookToReturnHistory) {
+			if (l.getReturnDate() == null) {
+				updatedLoan = l;
+			}
+		}
+		updatedLoan.setReturnDate(LocalDate.now().plusDays(1L + (long) (Math.random() * (5L - 1L))));
 		System.out.println("");
 		System.out.println("---------------------------------");
 		System.out.println("Livre retourné ");
@@ -222,8 +230,32 @@ public class BookApp {
 
 	}
 	
-	private void checkBorrowedBooks() {
-		
+	private void checkBook() {
+
+		System.out.println("Entrez la date de début ");
+		String date = scan.nextLine();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String text = date.formatted(formatter);
+		LocalDate startDate = LocalDate.parse(text, formatter);
+
+		System.out.println("Entrez la date de fin ");
+		String date2 = scan.nextLine();
+		DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String text1 = date2.formatted(formatter1);
+		LocalDate endDate = LocalDate.parse(text1, formatter1);
+
+		List<Book> selectedLoans = new ArrayList<>();
+		List<Book> books = bookMethods.returnBookList();
+		for (Book b : books) {
+			for (Loan l : b.getLoanHistory()) {
+				if ((l.getLoanDate().isEqual(startDate) || l.getLoanDate().isAfter(startDate)) && 
+						(l.getLoanDate().isEqual(endDate) || l.getLoanDate().isBefore(endDate))) {
+					selectedLoans.add(b);
+				}
+			}
+		}
+		bookMethods.printList(selectedLoans);
+
 	}
 	
 	private void printBookList() {

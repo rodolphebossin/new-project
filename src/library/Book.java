@@ -2,13 +2,14 @@ package library;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Book implements Serializable{
 	private Integer id;
 	private String title;
 	private String description;
 	private LocalDate releaseDate;
-	private Loan loan;
+	private ArrayList<Loan> loanHistory;
 	private Boolean isBorrowed;
 	
 	public Book() {
@@ -17,23 +18,37 @@ public class Book implements Serializable{
 
 
 
-	public Book(Integer id, String title, String description, LocalDate releaseDate, Loan loan, Boolean isBorrowed) {
+	public ArrayList<Loan> getLoanHistory() {
+		return loanHistory;
+	}
+
+
+
+	public void setLoanHistory(ArrayList<Loan> loanHistory) {
+		this.loanHistory = loanHistory;
+	}
+
+
+
+	public Book(Integer id, String title, String description, LocalDate releaseDate, Boolean isBorrowed) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.releaseDate = releaseDate;
-		this.loan = loan;
 		this.isBorrowed = isBorrowed;
 	}
-	
-	public Book(Integer id, String title, String description, LocalDate releaseDate, String name, LocalDate loanDate, LocalDate returnDate, Boolean isBorrowed) {
+
+
+
+	public Book(Integer id, String title, String description, LocalDate releaseDate, ArrayList<Loan> loanHistory,
+			 Boolean isBorrowed) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.releaseDate = releaseDate;
-		this.loan = new Loan(name, releaseDate, returnDate);
+		this.loanHistory = new ArrayList<>();
 		this.isBorrowed = isBorrowed;
 	}
 
@@ -44,12 +59,35 @@ public class Book implements Serializable{
 	}
 
 
+	public void addLoan(Loan loan) {
+		checkLoanInstantiation();
+		
+		this.loanHistory.add(loan);
+	}
+	
+	public void checkLoanInstantiation() {
+		if(this.loanHistory == null) {
+			this.loanHistory = new ArrayList<>();
+		}
+	}
+
+	
+
 
 
 	@Override
 	public String toString() {
-		return "Book [id=" + id + ", title=" + title + ", description=" + description + ", releaseDate=" + releaseDate
-				+ ", loan=" + loan + ", isBorrowed=" + isBorrowed + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("Book [id= " + id + ", title= " + title + ", description= " + description + ", releaseDate= " + releaseDate
+				+ ", isBorrowed= " + isBorrowed + "]\n");
+				
+		builder.append("loanHistory= [");
+		
+		for(Loan loan : this.loanHistory) {
+			builder.append(loan).append("\n").append("              ");
+		}
+		
+		return builder.toString();
 	}
 
 
@@ -80,10 +118,6 @@ public class Book implements Serializable{
 
 
 
-	public Loan getLoan() {
-		return loan;
-	}
-
 
 
 	public Boolean getIsBorrowed() {
@@ -96,11 +130,6 @@ public class Book implements Serializable{
 		this.id = id;
 	}
 
-
-
-	public void setLoan(Loan loan) {
-		this.loan = loan;
-	}
 
 
 
